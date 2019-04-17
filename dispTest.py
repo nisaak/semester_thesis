@@ -10,7 +10,7 @@ Created on Wed Apr  3 16:04:16 2019
 import cv2
 import numpy as np
 import matplotlib.image
-from uvdisparity import uv_disp
+import uvdisparity
 #specify path
 path_left = '/home/nisaak/Documents/semester_thesis/export_test/day_cloudy1/left/frame0067.jpg'
 path_right = '/home/nisaak/Documents/semester_thesis/export_test/day_cloudy1/right/frame0068.jpg'
@@ -31,8 +31,12 @@ def load_images(path_right, path_left):
     
     #rescale images
     
-    img_left = cv2.resize(img_left, None, None,fx=0.5,fy=0.5,interpolation = cv2.INTER_AREA) 
-    img_right = cv2.resize(img_right,None, None, fx=0.5,fy=0.5,interpolation = cv2.INTER_AREA)
+#    img_left = cv2.resize(img_left, None, None,fx=0.5,fy=0.5,interpolation = cv2.INTER_AREA) 
+#    img_right = cv2.resize(img_right,None, None, fx=0.5,fy=0.5,interpolation = cv2.INTER_AREA)
+    
+    img_left = cv2.resize(img_left, (420,289), interpolation = cv2.INTER_AREA)
+    img_right = cv2.resize(img_right,(420,289), interpolation = cv2.INTER_AREA)
+
 
     #convert to uint8
     img_left = np.array(img_left, dtype= np.uint8)
@@ -208,14 +212,22 @@ if video == 1:
         img_right = cv2.equalizeHist(np.copy(gray[1]))
         img_left = cv2.equalizeHist(np.copy(gray[0]))
 
-        img_left = cv2.resize(img_left, None, None,fx=0.5,fy=0.5,interpolation = cv2.INTER_AREA) 
-        img_right = cv2.resize(img_right,None, None, fx=0.5,fy=0.5,interpolation = cv2.INTER_AREA)
+#        img_left = cv2.resize(img_left, None, None,fx=0.5,fy=0.5,interpolation = cv2.INTER_AREA) 
+#        img_right = cv2.resize(img_right,None, None, fx=0.5,fy=0.5,interpolation = cv2.INTER_AREA)
+        img_left = cv2.resize(img_left,(420,289),interpolation = cv2.INTER_AREA) 
+        img_right = cv2.resize(img_right, (420,289),interpolation = cv2.INTER_AREA)
 
         undis_right, undis_left = rectify_and_remap(img_right, img_left)
         
         disparity_img, _ = disparity(undis_right, undis_left)
+        print(disparity_img.shape)
+        print(uvdisparity.height)
         cv2.imshow('disp', disparity_img)
-        uv_disp(disparity_img, img_right)
+        
+        
+        #now calculate uv_disparity
+        V_disp = uvdisparity.v_disp(disparity_img)
+        cv2.imshow('V_disp', V_disp)
         
     
     for c in cap:
@@ -229,7 +241,6 @@ else:
     cv2.waitKey()     
 
 
-cv2.waitKey(10)
 cv2.destroyAllWindows()
 
 
