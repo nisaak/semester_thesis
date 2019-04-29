@@ -12,110 +12,85 @@ import numpy as np
 import matplotlib.image
 import uvdisparity
 #specify path
-path_left = '/home/nisaak/Documents/semester_thesis/export_test/day_cloudy1/left/frame0067.jpg'
-path_right = '/home/nisaak/Documents/semester_thesis/export_test/day_cloudy1/right/frame0068.jpg'
 
-video = 1
+#path = "/home/nisaak/Documents/semester_thesis/datasets/malaga-urban-dataset-extract-01/Images"
+#path_left = path + "/left/img_CAMERA1_1261228749.918590_left.jpg"
+#path_right = path + "/right/img_CAMERA1_1261228749.918590_right.jpg"
 
+path_left = "/home/nisaak/Documents/semester_thesis/export_test/day_sunny1/left/frame0056.jpg"
+path_right = "/home/nisaak/Documents/semester_thesis/export_test/day_sunny1/right/frame0059.jpg"
 
+video = 0
+#height, width  = (360, 640) 
+#height, width= (768, 1024)
+height, width = (720, 1280)
 
 
 #load images
 
-def load_images(path_right, path_left):
+def load_images(path_right, path_left, grayscale):
     
     #load images and save as grayscale
     
-    img_left = cv2.imread(path_left,0)
-    img_right = cv2.imread(path_right,0)
-    
-    #rescale images
-    
-#    img_left = cv2.resize(img_left, None, None,fx=0.5,fy=0.5,interpolation = cv2.INTER_AREA) 
-#    img_right = cv2.resize(img_right,None, None, fx=0.5,fy=0.5,interpolation = cv2.INTER_AREA)
-    
-    img_left = cv2.resize(img_left, (420,289), interpolation = cv2.INTER_AREA)
-    img_right = cv2.resize(img_right,(420,289), interpolation = cv2.INTER_AREA)
+    img_left = cv2.imread(path_left, grayscale)
 
-
-    #convert to uint8
-    img_left = np.array(img_left, dtype= np.uint8)
-    img_right = np.array(img_right,dtype=np.uint8)
+    img_right = cv2.imread(path_right, grayscale)
     
+    if img_right is None:
+        print('right image could not be read')
+    if img_left is None:
+        print('left image could not be read')
     
     return img_right, img_left
 
-
 def rectify_and_remap(img_right, img_left):
-    
 
+
+    #left
     
+    cam_mat_left = np.matrix([[701.027680, 0.000000, 639.252473],
+                              [0.000000, 700.144686, 371.672457],
+                              [0.000000, 0.000000, 1.000000]], np.float32)
     
-    #rectification matrices
+    dist_left = np.matrix([-0.171607, 0.025746, 0.001324, -0.000930, 0.000000], np.float32)
     
-    R_left = np.array([[0.99934, 0.000099, -0.036288],\
-                      [0.000041, 0.999993, 0.003857],\
-                      [0.036288, -0.003856, 0.999334]],\
-                       np.float32)
+    R_left = np.matrix([[0.999981, -0.002404, 0.005590],
+                        [0.002341, 0.999934, 0.011208],
+                        [-0.005617, -0.011194, 0.999922]],np.float32)
     
-    R_right = np.array([[0.998947, 0.001982, -0.045833],\
-                        [-0.002159, 0.999990, -0.003809],\
-                        [0.045825, 0.003904, 0.998942]],\
-                        np.float32)
+    P_left = np.matrix([[693.172274, 0.000000, 628.266212, 0.000000],
+                        [0.000000, 693.172274, 349.947464, 0.000000],
+                        [0.000000, 0.000000, 1.000000, 0.000000]], np.float32)
     
-    #camera matrices
+    #right
     
-    cam_mat_left = np.matrix([[351.087640, 0.000000, 337.599686],\
-                             [0.000000, 351.004496, 193.493580],\
-                             [0.000000, 0.000000, 1.000000]],\
-                             np.float32)
+    cam_mat_right  = np.matrix([[700.187722, 0.000000, 641.248870],
+                                [0.000000, 699.757218, 330.073207],
+                                [0.000000, 0.000000, 1.000000]], np.float32)
     
-    cam_mat_right = np.matrix([[358.601746, 0.000000, 335.011174],\
-                              [0.000000, 358.378270, 178.059030],\
-                              [0.000000, 0.000000, 1.000000]],\
-                              np.float32)
+    dist_right = np.matrix([-0.174720, 0.025240, -0.000252, -0.000938, 0.000000],np.float32)
     
-    #distortion coefficients
+    R_right = np.matrix([[0.999986, -0.001631, 0.005038],
+                         [0.001687, 0.999936, -0.011197],
+                         [-0.005020, 0.011205, 0.999925]],np.float32)
     
-    dist_left = np.array([-0.166992, 0.031731, 0.002833, 0.000323, 0.000000],np.float32)
-    
-    dist_right  = np.array([-0.156551, 0.018860, 0.002804, -0.001476, 0.000000],np.float32)
-    
-    
-    
-    """"
-    these are the parameters from the official calibration file
-    
-    ///////
-    cam_mat_left = np.matrix('350.409 0.00 338.233; 0.0 350.409 193.477; 0.0 0.0 1.0',np.float32)
-    dist_left= np.matrix('-0.174318 0.0261121 0.002833 0.000323 0.0',np.float32)
-    cam_mat_right = np.matrix('349.38 0.00 335.541;0.0 349.38 195.064; 0.0 0.0 1.0',np.float32)
-    dist_right = np.matrix('-0.172731 0.0257849 0.002804 -0.001476 0.0',np.float32)
-    
-    M = np.matrix('1.053655553328680439e+00 -9.217688345630560554e-03 -1.312381196971389663e+01; \
-                  9.701598541577670376e-03 1.019989885839541088e+00 -3.065585312977083632e+01; \
-                  2.927936696573258345e-05 3.003417193742115971e-05 1.000000000000000000e+00')
-    img_right_undis, img_left_undis = rectification_calib.rect_calib(img_right, img_left)
-    
-    ///////
-    
-    """
-    
+    P_right = np.matrix([[693.172274, 0.000000, 628.266212, -83.243404],
+                         [0.000000, 693.172274, 349.947464, 0.000000],
+                         [0.000000, 0.000000, 1.000000, 0.000000]],np.float32)
+
     #find remap matrices
     
-    m1_left, m2_left = cv2.initUndistortRectifyMap(cam_mat_left, dist_left, R_left,None,(img_left.shape[1],img_left.shape[0]), cv2.CV_32FC1)
+    m1_left, m2_left = cv2.initUndistortRectifyMap(cam_mat_left, dist_left, R_left, P_left, (width, height), cv2.CV_32FC1)
     
-    m1_right, m2_right = cv2.initUndistortRectifyMap(cam_mat_right, dist_right, R_right,None,(img_left.shape[1],img_left.shape[0]), cv2.CV_32FC1)
+    m1_right, m2_right = cv2.initUndistortRectifyMap(cam_mat_right, dist_right, R_right, P_right, (width,height), cv2.CV_32FC1)
     
     #remap
     
-    img_right_undis = cv2.remap(img_right, m1_right,m2_right, cv2.INTER_CUBIC)
+    img_right_undis = cv2.remap(img_right, m1_right,m2_right, cv2.INTER_LANCZOS4, borderMode=cv2.BORDER_TRANSPARENT)
     
-    img_left_undis = cv2.remap(img_left,m1_left,m2_left,cv2.INTER_CUBIC)
+    img_left_undis = cv2.remap(img_left,m1_left,m2_left,cv2.INTER_LANCZOS4, borderMode=cv2.BORDER_TRANSPARENT)
     
-    #img_right_undis = cv2.normalize(img_right_undis, None, alpha=0, beta = 200, norm_type = cv2.NORM_MINMAX, dtype = cv2.CV_8UC1)
-    #img_left_undis = cv2.normalize(img_left_undis, None, alpha=0, beta = 200, norm_type = cv2.NORM_MINMAX, dtype = cv2.CV_8UC1)
-    
+
     return img_right_undis, img_left_undis
 
 
@@ -125,62 +100,81 @@ def rectify_and_remap(img_right, img_left):
 
 
 
-def disparity(img_right_undis, img_left_undis):
-    
-    
-    #workaround for trunctuation bug, create border with sufficient size around image
-    
-    img_left_undis = cv2.copyMakeBorder(img_left_undis, 0,0,400,400, cv2.BORDER_CONSTANT, value = [255,255,255])
+def disparity(img_right_undis, img_left_undis, method):
 
-    img_right_undis = cv2.copyMakeBorder(img_right_undis, 0,0,400,400, cv2.BORDER_CONSTANT, value = [255,255,255])
+    left_for_matcher = np.copy(img_left_undis)
+    right_for_matcher = np.copy(img_right_undis)
+    
+
+    if method == 1: #sgbm
+        window_size = 5
+        minD = 0
+        numD = 1*16-minD
+        blockS = 7
+        #####
+     
+        matcher_left = cv2.StereoSGBM_create(minDisparity = minD,\
+                                       numDisparities=numD,\
+                                       blockSize=blockS,\
+                                       P1 = 8*window_size**2,\
+                                       P2 = 32*window_size**2,\
+                                       disp12MaxDiff = 1, \
+                                       preFilterCap = 15,\
+                                       uniquenessRatio = 15,\
+                                       speckleWindowSize = 400,\
+                                       speckleRange = 32,
+                                       mode=cv2.STEREO_SGBM_MODE_SGBM_3WAY)
+    else: #bm
+        matcher_left = cv2.StereoBM.create(6*16,21)
+        minD = -20
+        matcher_left.setMinDisparity(minD)
+        matcher_left.setDisp12MaxDiff(1)
+        matcher_left.setTextureThreshold(0)
+        matcher_left.setSpeckleWindowSize(45)
+        matcher_left.setSpeckleRange(16)
+        matcher_left.setPreFilterType(cv2.STEREO_BM_PREFILTER_XSOBEL)
+        matcher_left.setUniquenessRatio(100)
+        matcher_left.setPreFilterCap(63)
+        matcher_left.setPreFilterSize(7)
+    
+    #post processing for disparity map
+    #filter parameters
+    LAMBDA = 8000
+    SIGMA = 1.5
+    
+    wls = cv2.ximgproc.createDisparityWLSFilter(matcher_left = matcher_left)
+    matcher_right = cv2.ximgproc.createRightMatcher(matcher_left)
+
+    wls.setLambda(LAMBDA)
+    wls.setSigmaColor(SIGMA)
     
     
-######
-    window_size = 11
-    minD = -10
-    numD = 16*5
-    blockS = 9
-    #####
-    stereo = cv2.StereoSGBM_create(minDisparity = minD,\
-                                   numDisparities=numD,\
-                                   blockSize=blockS,\
-                                   P1 = 8*window_size**2,\
-                                   P2 = 32*window_size**2,\
-                                   disp12MaxDiff = 12, \
-                                   preFilterCap = 30,\
-                                   uniquenessRatio = 1,\
-                                   speckleWindowSize = 20,\
-                                   speckleRange = 2)
-    """
-    ######
-    window_size = 7
-    minD = -20
-    numD = 16*10
-    blockS = 3
-    #####
-    stereo = cv2.StereoSGBM_create(minDisparity = minD,\
-                                   numDisparities=numD,\
-                                   blockSize=blockS,\
-                                   P1 = 8*window_size**2,\
-                                   P2 = 32*window_size**2,\
-                                   disp12MaxDiff = 12, \
-                                   preFilterCap = 30,\
-                                   uniquenessRatio = 1,\
-                                   speckleWindowSize = 50,\
-                                   speckleRange = 1)
-    """
+    right_for_filter = np.copy(right_for_matcher)
+        
+    left_for_filter = np.copy(left_for_matcher)
     
-    disparity = stereo.compute(img_left_undis, img_right_undis, None)
-    disparity = disparity[:,400:(disparity.shape[1]-400)]
-    disparity = cv2.normalize(disparity, None,alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8UC1)
-    disparity_coloured = cv2.applyColorMap(disparity, cv2.COLORMAP_HSV)
     
-    return disparity, disparity_coloured
+    disparity_right = matcher_right.compute(right_for_matcher, left_for_matcher, None)
+    
+    disparity_left = matcher_left.compute(left_for_matcher, right_for_matcher, None)
+
+    disparity_left_wls = np.empty_like(disparity_left)
+    
+    print(left_for_filter.shape)
+        
+    wls.filter(disparity_left, left_for_filter, disparity_left_wls, disparity_right, right_view = right_for_filter)
+    
+    conf_map  = wls.getConfidenceMap()
+    cv2.normalize(conf_map,conf_map, 0, 255, cv2.NORM_MINMAX, dtype = cv2.CV_8U)
+    cv2.imshow('conf-map', conf_map)
+    
+    return disparity_left, disparity_left_wls
 
 if video == 1:
 #specify video loading
     video_left = '/home/nisaak/Documents/semester_thesis/export_test/dübendorf/left/left.avi'
     video_right = '/home/nisaak/Documents/semester_thesis/export_test/dübendorf/right/right.avi'
+
     
     
     names = [video_left,\
@@ -202,44 +196,70 @@ if video == 1:
         for i,f in enumerate(frames):
             if ret[i] is True:
                 gray[i] = cv2.cvtColor(f, cv2.COLOR_BGR2GRAY)
+#                gray[i] = f
                 cv2.imshow(window_titles[i], gray[i]);
       
                 
                 
-        if cv2.waitKey(10) & 0xFF == ord('q'):
+        if cv2.waitKey(5) & 0xFF == ord('q'):
            break
        
-        img_right = cv2.equalizeHist(np.copy(gray[1]))
-        img_left = cv2.equalizeHist(np.copy(gray[0]))
-
-#        img_left = cv2.resize(img_left, None, None,fx=0.5,fy=0.5,interpolation = cv2.INTER_AREA) 
-#        img_right = cv2.resize(img_right,None, None, fx=0.5,fy=0.5,interpolation = cv2.INTER_AREA)
-        img_left = cv2.resize(img_left,(420,289),interpolation = cv2.INTER_AREA) 
-        img_right = cv2.resize(img_right, (420,289),interpolation = cv2.INTER_AREA)
-
-        undis_right, undis_left = rectify_and_remap(img_right, img_left)
+        img_right = gray[1]
+        img_left = gray[0]
         
-        disparity_img, _ = disparity(undis_right, undis_left)
-        print(disparity_img.shape)
-        print(uvdisparity.height)
-        cv2.imshow('disp', disparity_img)
+
+        left_rect, right_rect = rectify_and_remap(img_right, img_left)
+
         
+        disparity_left, disparity_left_wls = disparity(right_rect, left_rect,0)
         
         #now calculate uv_disparity
-        V_disp = uvdisparity.v_disp(disparity_img)
+        V_disp = uvdisparity.v_disp(disparity_left_wls)
         cv2.imshow('V_disp', V_disp)
+        cdst = uvdisparity.v_hough(V_disp, 1)
+        
+        #change dtype for visualisation
+        DEPTH_VISUALIZATION_SCALE = 2048
+#        disparity_left = cv2.normalize(disparity_left, None, 0, 255, cv2.NORM_MINMAX, dtype= cv2.CV_8U)
+#        disparity_left_wls = cv2.normalize(disparity_left_wls, None,0,255, cv2.NORM_MINMAX,dtype= cv2.CV_8U)
+        print(disparity_left.dtype)
+        cv2.imshow('disp', disparity_left/DEPTH_VISUALIZATION_SCALE)
+        cv2.imshow('disp_wls', disparity_left_wls/DEPTH_VISUALIZATION_SCALE)
+        
+        
+
+
         
     
     for c in cap:
         if c is not None:
             c.release();
-else:
-    img_right, img_left = load_images(path_right, path_left)
-    undis_right, undis_left = rectify_and_remap(img_right, img_left)
-    disparity, _ = disparity(undis_right, undis_left)
-    cv2.imshow('disp', disparity)   
-    cv2.waitKey()     
 
+
+
+else:
+    img_right, img_left = load_images(path_right, path_left, 0)
+    cv2.imshow('right', img_right)
+    cv2.imshow('left', img_left)
+    
+    left_rect, right_rect = rectify_and_remap(img_right, img_left)
+
+    disparity_left, disparity_left_wls = disparity(right_rect, left_rect,0)
+    
+    #now calculate uv_disparity
+    V_disp = uvdisparity.v_disp(disparity_left_wls)
+    cv2.imshow('V_disp', V_disp)
+    cdst = uvdisparity.v_hough(V_disp, 1)
+    
+    #change dtype for visualisation
+    DEPTH_VISUALIZATION_SCALE = 2048
+#        disparity_left = cv2.normalize(disparity_left, None, 0, 255, cv2.NORM_MINMAX, dtype= cv2.CV_8U)
+#        disparity_left_wls = cv2.normalize(disparity_left_wls, None,0,255, cv2.NORM_MINMAX,dtype= cv2.CV_8U)
+    print(disparity_left.dtype)
+    cv2.imshow('disp', disparity_left/DEPTH_VISUALIZATION_SCALE)
+    cv2.imshow('disp_wls', disparity_left_wls/DEPTH_VISUALIZATION_SCALE)
+
+    cv2.waitKey()
 
 cv2.destroyAllWindows()
 

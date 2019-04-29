@@ -6,8 +6,10 @@ import math
 #define parameters for all functions
 #shape of all images
 
-height, width = (289, 420)
-MAX_DISPARITY = 200 
+height, width = (720, 1280)
+#height, width  = (360, 640) 
+#height, width  = (768, 1024)
+MAX_DISPARITY = 160
 
 
 def load_and_resize(disp_map, source_image):
@@ -15,8 +17,8 @@ def load_and_resize(disp_map, source_image):
     src_img = np.copy(source_image)
     disp = np.copy(disp_map)
     
-    src_img = cv2.resize(src_img, (420,289), interpolation =cv2.INTER_CUBIC)
-    disp = cv2.resize(disp, (420,289), interpolation =cv2.INTER_CUBIC)
+    src_img = cv2.resize(src_img, (width, height), interpolation =cv2.INTER_CUBIC)
+    disp = cv2.resize(disp, (width, height), interpolation =cv2.INTER_CUBIC)
 
     return disp, src_img
 
@@ -41,7 +43,9 @@ def u_disp(disp_map):
     
     return U_disp
     
-def v_disp(disp_map):
+def v_disp(disparity):
+    
+    disp_map = np.copy(disparity).astype(np.float32)
     
     #    def v_disparity(self, image):
     V_disp = np.zeros((height, MAX_DISPARITY),np.float)
@@ -59,6 +63,11 @@ def v_disp(disp_map):
     return V_disp
     
 def v_hough(V_disp, method):
+    
+    
+    
+    V_disp[0:int(height/2),:] = 0 #make upper half black for more relevant line detection
+    cv2.imshow('blackedvdisp',V_disp)
     #convert V_disp to right format
     cdst = cv2.cvtColor(V_disp, cv2.COLOR_GRAY2BGR)
     
@@ -68,7 +77,7 @@ def v_hough(V_disp, method):
 
     if method == 0:
         
-        v_lines = cv2.HoughLines(V_disp, 1, np.pi/180, threshold)
+        v_lines = cv2.HoughLines(V_disp, 2, np.pi/180, threshold)
         
         a,b,c = v_lines.shape
         for i in range(a):
@@ -84,20 +93,25 @@ def v_hough(V_disp, method):
     
     
     if method == 1:
-        v_lines = cv2.HoughLinesP(V_disp, 1, np.pi/180, threshold, None, 100, 3) 
+        v_lines = cv2.HoughLinesP(V_disp, 2, np.pi/180, threshold, None, 100, 3) 
         
         #lines can extend outside rectangle making gradient false
-        if v_lines: 
-            for i in range(0, len(v_lines)):
-                l = v_lines[i][0]
-                cv2.line(cdst, (l[0], l[1]), (l[2], l[3]), (255,255,0), 1, cv2.LINE_AA)
+        try:
+            if v_lines.any:
+                for i in range(0, len(v_lines)):
+                    l = v_lines[i][0]
+                    cv2.line(cdst, (l[0], l[1]), (l[2], l[3]), (255,255,0), 1, cv2.LINE_AA)
+            else:
+                print('no lines detected')
+        except AttributeError:
+            print('no lines detected')
 
     cdst = cv2.cvtColor(cdst, cv2.COLOR_BGR2GRAY)
     
     return cdst
     
-def mask(source_img, disp_map, cdst):
-    
+def mask(disp_map, cdst):
+        
     threshold = 7
 
     
