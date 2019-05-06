@@ -1,5 +1,4 @@
 import cv2
-import matplotlib.pyplot as plt
 import numpy as np
 import math
 
@@ -66,6 +65,8 @@ def v_disp(disparity):
     disp_map = np.copy(disparity)
 
     
+
+    
     #    def v_disparity(self, image):
     V_disp = np.zeros((height, MAX_DISPARITY),np.float)
     for v in range(height):
@@ -75,7 +76,6 @@ def v_disp(disparity):
     vhist_vis  = np.array(V_disp*255, np.uint8)
     vblack_mask = vhist_vis < 20
     vhist_vis[vblack_mask] = 0
-    vhist_vis[:,0:20] = 0
     V_disp = vhist_vis
     
 #    V_disp = cv2.normalize(V_disp, V_disp, 0, 255, cv2.NORM_MINMAX, cv2.CV_8U)
@@ -136,8 +136,7 @@ def v_hough(V_disp, method):
     #convert V_disp to right format
     cdst = np.zeros_like(V_disp)   
     cdst_vert = np.zeros_like(V_disp)
-    threshold  = 100
-    
+    threshold  = 50
     #specify which method to use, probabilistic or standard hough
 
     if method == 0:
@@ -158,7 +157,7 @@ def v_hough(V_disp, method):
     
     
     if method == 1:
-        v_lines = cv2.HoughLinesP(V_disp, 2, np.pi/180, threshold, None, 100, 40) 
+        v_lines = cv2.HoughLinesP(V_disp, 2, np.pi/180, threshold, None, 50, 10) 
         #lines can extend outside rectangle making gradient false
         try:
             if v_lines.any:
@@ -173,7 +172,7 @@ def v_hough(V_disp, method):
         except AttributeError:
             print('no lines detected')
             
-    cv2.imshow('cdst-vert', cdst_vert)
+    cv2.imshow('cdst', cdst)
 
 #    cdst = cv2.cvtColor(cdst, cv2.COLOR_BGR2GRAY)
     
@@ -186,7 +185,7 @@ def mask(disparity, cdst):
     
     cdst = cv2.resize(cdst, dsize = (255, height))
      
-    threshold = 5
+    threshold = 10
     
     disp_map = np.copy(disparity)
     
@@ -203,8 +202,7 @@ def mask(disparity, cdst):
     for m in range(np.uint8(height/3),height):
         threshold += 10/height
         for n in range(width):
-#            print(v_line[m]),
-#            print(disp_map[m,n])
+
 
             if v_line[m] == 0:
                 mask_v_disp[m,n] = 0
@@ -218,7 +216,22 @@ def mask(disparity, cdst):
         
     return mask_v_disp
     
+def refine_mask(mask):
+    new_mask = np.zeros_like(mask)
+    for val in np.unique(mask)[1:]:
+        mask_for_labels = np.uint8(mask == val)
+        labels, stats = cv2.connectedComponentsWithStats(mask_for_labels, 4)[1:3]
+        largest_label = 1 + np.argmax(stats[1:, cv2.CC_STAT_AREA])
+        new_mask[labels == largest_label] = val
+        
+    kernel = np.ones((1,1), np.uint8)
+    kernel_close = np.ones((3,3), np.uint8)
+    opening = cv2.morphologyEx(new_mask, cv2.MORPH_OPEN, kernel)
+#    opening = cv2.morphologyEx(opening, cv2.MORPH_OPEN, kernel)
+    closing = cv2.morphologyEx(opening, cv2.MORPH_CLOSE, kernel_close)
+    new_mask = np.copy(closing)
     
+    return new_mask
     
 
     
