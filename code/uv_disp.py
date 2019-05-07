@@ -46,7 +46,7 @@ def u_disp(disparity):
                                       ranges = [0, MAX_DISPARITY]).flatten() / np.float(width)
     
     uhist_vis = np.array(U_disp*255, np.uint8) #scale
-    ublack_mask = uhist_vis < 20    #define threshold for black mask
+    ublack_mask = uhist_vis < 5    #define threshold for black mask
     uhist_vis[ublack_mask] = 0  #set black mask to zero
 
     U_disp = uhist_vis
@@ -74,7 +74,7 @@ def v_disp(disparity):
                                       ranges = [0, MAX_DISPARITY]).flatten() / np.float(height)
 
     vhist_vis  = np.array(V_disp*255, np.uint8)
-    vblack_mask = vhist_vis < 20
+    vblack_mask = vhist_vis < 10
     vhist_vis[vblack_mask] = 0
     V_disp = vhist_vis
     
@@ -136,12 +136,12 @@ def v_hough(V_disp, method):
     #convert V_disp to right format
     cdst = np.zeros_like(V_disp)   
     cdst_vert = np.zeros_like(V_disp)
-    threshold  = 50
+    threshold  = 30
     #specify which method to use, probabilistic or standard hough
 
     if method == 0:
         
-        v_lines = cv2.HoughLines(V_disp, 2, np.pi/180, threshold)
+        v_lines = cv2.HoughLines(V_disp, 1, np.pi/180, threshold)
         
         a,b,c = v_lines.shape
         for i in range(a):
@@ -157,16 +157,23 @@ def v_hough(V_disp, method):
     
     
     if method == 1:
-        v_lines = cv2.HoughLinesP(V_disp, 2, np.pi/180, threshold, None, 50, 10) 
-        #lines can extend outside rectangle making gradient false
+        v_lines = cv2.HoughLinesP(V_disp, 1, np.pi/180, threshold, None, 50, 50) #maybe only use longest line
+
         try:
             if v_lines.any:
-                for i in range(0, len(v_lines)):
+                max_dist= -1.0
+                max_l = np.zeros((4,1))
+                for i in range(0, len(v_lines)): #iterate through all lines, find longest and print it
                     l = v_lines[i][0]
                     if np.abs(l[2]-l[0]) >= 10:
-                        cv2.line(cdst, (l[0], l[1]), (l[2], l[3]), (255,255,0), 1, cv2.LINE_8)
-                    else:
-                        cv2.line(cdst_vert, (l[0], l[1]), (l[2], l[3]), (255,255,0), 1, cv2.LINE_8)
+                        theta1 = (l[3]-l[1])
+                        theta2 = (l[2]-l[0])
+                        hyp = math.hypot(theta1, theta2)
+                        if max_dist < hyp:
+                            max_l = l
+                            max_dist = hyp
+                cv2.line(cdst, (max_l[0], max_l[1]), (max_l[2], max_l[3]), (255,255,0), 1, cv2.LINE_8)
+
             else:
                 print('no lines detected')
         except AttributeError:
@@ -185,7 +192,7 @@ def mask(disparity, cdst):
     
     cdst = cv2.resize(cdst, dsize = (255, height))
      
-    threshold = 10
+    threshold = 12
     
     disp_map = np.copy(disparity)
     
@@ -193,14 +200,14 @@ def mask(disparity, cdst):
     
     v_line = np.zeros((height,1))
     for n in range(np.uint8(height/3),height):
-        v_line[n] = np.argmax(cdst[n,:])
+        v_line[n] = np.argmax(cdst[n,:]) #this might not be the best way to do the disparity comparision
 #        print(v_line[n])
 #        v_line[n,0] = np.argwhere(cdst[n,:]).max(1)
     #calculate mask for v disparity
 
     mask_v_disp = np.zeros((height,width),np.uint8)
-    for m in range(np.uint8(height/3),height):
-        threshold += 10/height
+    for m in range(height):
+        threshold -=10/(2*height)
         for n in range(width):
 
 
@@ -224,7 +231,7 @@ def refine_mask(mask):
         largest_label = 1 + np.argmax(stats[1:, cv2.CC_STAT_AREA])
         new_mask[labels == largest_label] = val
         
-    kernel = np.ones((1,1), np.uint8)
+    kernel = np.ones((3,3), np.uint8)
     kernel_close = np.ones((3,3), np.uint8)
     opening = cv2.morphologyEx(new_mask, cv2.MORPH_OPEN, kernel)
 #    opening = cv2.morphologyEx(opening, cv2.MORPH_OPEN, kernel)

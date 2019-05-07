@@ -5,6 +5,7 @@ import os
 sys.path.append(os.path.abspath("/home/nisaak/Documents/st/semester_thesis/code/"))
 import uv_disp
 import numpy as np
+import math
 
 camera_settings = sl.CAMERA_SETTINGS.CAMERA_SETTINGS_BRIGHTNESS
 str_camera_settings = "BRIGHTNESS"
@@ -15,8 +16,11 @@ step_camera_settings = 1
 def main():
     print("Running...")
     init = sl.InitParameters()
-    init.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_MEDIUM  # Use PERFORMANCE depth mode
+    init.camera_resolution = sl.RESOLUTION.RESOLUTION_VGA
+    init.camera_fps = 60
+    init.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_PERFORMANCE  # Use PERFORMANCE depth mode
     init.coordinate_units = sl.UNIT.UNIT_MILLIMETER  # Use milliliter units (for depth measurements)
+    init.depth_minimum_distance = 300
     cam = sl.Camera()
     if not cam.is_opened():
         print("Opening ZED Camera...")
@@ -30,6 +34,7 @@ def main():
 
     mat = sl.Mat()
     disparity = sl.Mat()
+    depth = sl.Mat()
 
     print_camera_information(cam)
     print_help()
@@ -40,21 +45,28 @@ def main():
         if err == sl.ERROR_CODE.SUCCESS:
             cam.retrieve_image(mat, sl.VIEW.VIEW_LEFT)
             cam.retrieve_measure(disparity, sl.MEASURE.MEASURE_DISPARITY) #retrieve disparity map
+            cam.retrieve_image(depth, sl.VIEW.VIEW_DEPTH)
+            cv2.imshow('depth',depth.get_data())
+            
+            
             
             ###MASK CALCULATIONS
             
-            disp_np = np.copy(disparity.get_data()) #copy and convert to numpy array
-            cv2.normalize(disp_np, disp_np,0 ,255, cv2.NORM_MINMAX) #noramalize float to uint8 range
-            disp_np = disp_np.astype(np.uint8) #convert to uint8
-            
+            disp_np = np.copy(disparity.get_data()) #copy and convert to numpy array..! there are issues because normalization with nan and inf
+            info = np.finfo(disp_np.dtype)
+            disp_np[np.isnan(disp_np)] = 0 #this is need because else the images becomes black after normalization
+            disp_np[np.isinf(disp_np)] = 0
+
+            cv2.normalize(disp_np, disp_np, 0, 255, cv2.NORM_MINMAX, cv2.CV_32F) #normalizing makes flickering artifacts
+            disp_np = disp_np.astype(np.uint8)
             V_disp = uv_disp.v_disp(disp_np) #compute v-disp histogram
             
             houghlines = uv_disp.v_hough(V_disp, 1)
-            disp_np = cv2.resize(disp_np, dsize =(0,0),fx = 0.25, fy= 0.25)
+            disp_np = cv2.resize(disp_np, dsize =(0,0),fx = 0.5, fy= 0.5, interpolation = cv2.INTER_AREA)
 
             
             floor_mask = uv_disp.mask(disp_np, houghlines)
-            floor_mask = cv2.resize(floor_mask, dsize =(0,0),fx = 4, fy= 4,interpolation = cv2.INTER_AREA)
+            floor_mask = cv2.resize(floor_mask, dsize =(0,0),fx = 2, fy= 2,interpolation = cv2.INTER_AREA)
             
             refined_mask = uv_disp.refine_mask(floor_mask) #astype uint8
 
@@ -67,12 +79,12 @@ def main():
 
             
             
-#            disp_for_display = cv2.normalize(disp_np, None, 0, 255, cv2.NORM_MINMAX)
+            disp_np = cv2.resize(disp_np, dsize= (0,0), fx=2, fy=2)
             cv2.imshow('maskonimg', mask_on_img)
             cv2.imshow('disp_for_display', disp_np)
             cv2.imshow('V-disparity',V_disp)
-            cv2.imshow("ZED", mat.get_data())
-            cv2.imshow('refined_mask', refined_mask)
+#            cv2.imshow("ZED", mat.get_data())
+#            cv2.imshow('refined_mask', refined_mask)
 
             
             key = cv2.waitKey(5)
