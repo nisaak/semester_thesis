@@ -95,8 +95,8 @@ class UV_disp:
         #convert V_disp to right format
         cdst_hor = np.zeros_like(U_disp)
         max_linelen = 150
-        threshold_hor = 120
-        v_lines_hor = cv2.HoughLinesP(U_disp, 1, np.pi/180, threshold_hor, None, 30, 5) #maybe only use longest line
+        threshold_hor = 200
+        v_lines_hor = cv2.HoughLinesP(U_disp, 1, np.pi/180, threshold_hor, None, 30, 2) #maybe only use longest line
         try:
             if v_lines_hor.any:
                 for i in range(0, len(v_lines_hor)): #iterate through all lines, find longest and print it
@@ -115,11 +115,11 @@ class UV_disp:
         
         V_disp = np.copy(V_disparity)
         
-        V_disp[0:int(V_disp.shape[0]/3),:] = 0 #make upper third black for more relevant line detection
+        V_disp[0:int(V_disp.shape[0]/2),:] = 0 #make upper third black for more relevant line detection
         #convert V_disp to right format
         cdst = np.zeros_like(V_disp)   
-        threshold_long  = 100
-        v_lines = cv2.HoughLinesP(V_disp, 1, np.pi/180, threshold_long, None, 50, 5) #maybe only use longest line
+        threshold_long  = 150
+        v_lines = cv2.HoughLinesP(V_disp, 1, np.pi/180, threshold_long, None, 50, 1) #maybe only use longest line
         self.gradient = 0 #initialize gradient
         try:
             if v_lines.any:
@@ -127,7 +127,7 @@ class UV_disp:
                 max_l = np.zeros((4,1))
                 for i in range(0, len(v_lines)): #iterate through all lines, find longest and print it
                     l = v_lines[i][0]
-                    if np.abs(l[2]-l[0]) >= 5:
+                    if np.abs(l[2]-l[0]) >= 10:
                         theta1 = (l[3]-l[1])
                         theta2 = (l[2]-l[0])
                         hyp = math.hypot(theta1, theta2)
@@ -170,16 +170,15 @@ class UV_disp:
         return cdst_vert
       
       
-    def mask(self,disparity, cdst):
-        
-        
+    def mask(self,disparity, cdst): #mask calculation uses a lot of memory
+      
+      
         height, width = disparity.shape
-            
+
         cdst = cv2.resize(cdst, dsize = (255, height))
          
         threshold_baseline = 15 #adjust threshold according to line gradient
         grad = self.gradient
-#        print(self.gradient)
         k = math.pi/2 - math.atan(grad) #gradient dependent threshold
         threshold = math.cos(k) * threshold_baseline
         
@@ -268,9 +267,23 @@ class UV_disp:
         return obst*255
       
       
-    def last_nonzero(arr, axis, invalid_val=-1):
+    def last_nonzero(self, arr, axis, invalid_val=-1):
       mask = arr!=0
       val = arr.shape[axis] - np.flip(mask, axis=axis).argmax(axis=axis) - 1
       return np.where(mask.any(axis=axis), val, invalid_val)
+    
+    
+    def backprop(self, V_disparity, disparity, cdst):
+      
         
+        hist_to_backproject = np.multiply(cdst, V_disparity)
+        hist_to_backproject = cv2.normalize(hist_to_backproject, None, 0, 1, cv2.NORM_MINMAX)
+
+        cv2.imshow('hist', hist_to_backproject)
+        backprop = np.zeros_like(disparity)
+        height, width = disparity.shape
+#        for v in range(height):
+        backprop = cv2.calcBackProject(images = [disparity], channels = [0], hist = hist_to_backproject, ranges = [0, MAX_DISPARITY],scale =1)
+        cv2.imshow('backprop',backprop*255)
+        print(backprop.max())
     ###IGNORE FOR NOW####
