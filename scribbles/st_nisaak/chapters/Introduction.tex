@@ -5,7 +5,7 @@
 \chapter{Introduction}
 \label{chp:Introduction}
 
-The tasks of segmenting a scene into ground, obstacles and other labels is a well-researched topic. It is a fundamental part of any autonomous ground vehicle, and lays the basis for many different tasks, such as planning, safety features or scene understanding. Over the last few years, solutions to this task, which are based on machine learning methods, have deemed themselves to be robust and accurate. Their ability to generalise and be applied to a variety of scenes make them a reliable choice. There however, exist many approaches to the problem, which are based on classic computer vision, with implementations dating few decades back. \newline
+The task of segmenting a scene into ground, obstacles and other labels is a well-researched topic. It is a fundamental part of any autonomous ground vehicle, and lays the basis for many different tasks, such as planning, safety features or scene understanding. Over the last few years, solutions to this task, which are based on machine learning methods, have deemed themselves to be robust and accurate. Their ability to generalise and be applied to a variety of scenes make them a reliable choice. There however, exist many approaches to the problem, which are based on classic computer vision, with implementations dating few decades back. \newline
 The goal of this semester project is the implementation of a robust and accurate free space detection pipeline based on classic computer vision. The results of this pipeline can be used to e.g. label data for machine learning. If the pipeline does not perform as expected, a second pipeline is introduced, where the focus entirely lies on labeling data for machine learning tasks. 
 
 This semester project is part of a more extensive research into autonomous driving, based a self-driving Gokart. The Gokart is basis for a variety of research topics, such as planning, control systems and sensor fusion. The testing environment is a modular indoor Gokart track. The ground is flat, with no uphill or downhill sections. The track is not affected by weather conditions. 
@@ -14,3 +14,6 @@ This semester project is part of a more extensive research into autonomous drivi
 
 \section{Related Work}
 Related work on this topic is extensive. After limiting my research to the method of V-Disparity, early implementations can be dated back to 2002, with \cite{V-disparity_nonflat} providing a robust and accurate method for road detection, even for non-flat geometries. A study on the U-V Disparity method can be found in \cite{Hu2005}, providing a real-time implementation of the stereovision based scene analysis. The method was improved and adapted since it's introduction, becoming more robust and computationally efficient, as shown in \cite{Kakegawa2018}. Aside from free space detection, U-V-Disparity can be used solely for obstacle and pedestrian detection, with U-V-Disparity acting as the underlying basis for a SVM Classifier, where the extraced ROIs are used for training. Iloie et al. implemented this framework in \cite{Iloie2014}.
+
+\section{Structure of this report}
+This report is structured as follows. 
