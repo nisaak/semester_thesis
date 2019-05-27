@@ -1,0 +1,34 @@
+% !TeX document-id = {489a4b48-3347-4d5e-985a-4bd4e83eb476}
+% !TeX spellcheck = en_US
+% !TeX encoding = UTF-8
+% !TeX TXS-program:compile = txs:///latexmk/[-pdf -silent -shell-escape -latexoption="-synctex=1" -output-directory="build" -r "docstyle/nomenclature_latexmkrc"]
+% !TeX TXS-program:quick = txs:///compile | txs:///view
+
+\documentclass[english,sp]{docstyle/IDSCreport}
+
+\title{Free Space Segmentation for Gokart Application}
+\subtitle{V-Disparity}
+\author{Noah Isaak}
+\ethid{13-929-476}
+\semester{FS 2019}
+\email{nisaak@student.ethz.ch}
+\supervision{First Supervisor\\ Prof. Dr. Second Supervisor}
+\identification{IDSC-XX-YY-ZZ}
+\date{December 2018}
+\keywords{Ground detection, V-Disparity}
+\bibliography{bibliography}
+
+\begin{abstract}
+Road and ground detection are closely related key tasks for an autonomous ground vehicle. These computations should be robust and preferably be performed in real-time. This paper aims to show the implementation of the V-Disparity method for ground detection. The approach is based on classic computer vision and does not incorporate learning methods. Basis of the method is a disparity map, for which a row-wise histogram is computed. This V-disparity histogram robustly preserves geometric scene features and can be used for various tasks. Experimental results however show the shortcomings of the implementation and how they could be overcome. In the following, a second pipeline is introduced. A mapping from a Velodyne Vld-16 Lidar to a camera is computed. The binary obstacle - ground mask which is computed from the lidar's point cloud can then be projected onto the camera image. These labels can then be used for e.g. machine learning tasks.
+
+
+\end{abstract}
+
+\begin{document}
+\input{chapters/Introduction}
+\input{chapters/Method}
+\input{chapters/Implementation}
+\input{chapters/Results}
+\appendix
+\input{chapters/exampleAppendixChapter}
+\end{document}
