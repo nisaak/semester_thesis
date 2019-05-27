@@ -497,12 +497,16 @@ INPUT chapters/Introduction.tex
 INPUT chapters/Introduction.tex
 INPUT /usr/share/texmf/fonts/tfm/public/lm/ec-lmr17.tfm
 INPUT /usr/share/texmf/fonts/tfm/public/lm/ec-lmbx12.tfm
+INPUT /usr/share/texmf/fonts/tfm/public/lm/ec-lmr12.tfm
+INPUT /usr/share/texmf/fonts/tfm/public/lm/ec-lmbx12.tfm
 INPUT chapters/Method.tex
 INPUT chapters/Method.tex
 INPUT chapters/Implementation.tex
 INPUT chapters/Implementation.tex
 INPUT chapters/Results.tex
 INPUT chapters/Results.tex
+INPUT chapters/Conclusion.tex
+INPUT chapters/Conclusion.tex
 INPUT chapters/exampleAppendixChapter.tex
 INPUT chapters/exampleAppendixChapter.tex
 INPUT build/report.bbl
@@ -514,7 +518,6 @@ INPUT /usr/share/texmf/tex/latex/lm/t1lmss.fd
 INPUT /usr/share/texmf/tex/latex/lm/t1lmss.fd
 INPUT /usr/share/texmf/fonts/tfm/public/lm/ec-lmss10.tfm
 INPUT /usr/share/texmf/fonts/tfm/public/lm/ec-lmr17.tfm
-INPUT /usr/share/texmf/fonts/tfm/public/lm/ec-lmr12.tfm
 INPUT build/report.aux
 INPUT build/report.out
 INPUT build/report.out

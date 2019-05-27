@@ -32,4 +32,10 @@ Z.~Hu and K.~Uchimura, ``{U-V-disparity: An efficient algorithm for
   stereovision based scene analysis},'' \emph{IEEE Intelligent Vehicles
   Symposium, Proceedings}, vol. 2005, pp. 48--54, 2005.
 
+\bibitem{Kakegawa2018}
+S.~Kakegawa, H.~Matono, H.~Kido, and T.~Shima, ``{Road Surface Segmentation
+  based on Vertically Local Disparity Histogram for Stereo Camera},''
+  \emph{International Journal of Intelligent Transportation Systems Research},
+  vol.~16, no.~2, pp. 90--97, 2018.
+
 \end{thebibliography}

@@ -1,16 +1,16 @@
 @article{Oniga2015,
-abstract = {This paper introduces a computationally efficient, approach for obstacle detection in driving assistance applications, based on stereovision. The proposed approach involves three different steps aiming an increased quality of the results. The first step relies on the basics: obstacles correspond to peak regions in the u-disparity map. By applying the model of the stereo system, the peaks are detected with an adaptive threshold. The adaptive thresholding will calculate the accumulation of points required for an obstacle based on its distance (disparity) and will be related to the characteristics of the stereovision system. The second and third steps consist of refining the result of the previous, vertically respectively horizontally. This is necessary in order to fill out unmarked pixel regions which are classified as belonging to obstacles. The second step iterates vertically and propagates the obstacle label to neighbor pixels. The third step improves obstacle regions horizontally, with points that do not belong to the road. The solution is fast and reliable, on various scenarios, as every step is an improvement of the standard U-disparity approach for obstacle detection. {\textcopyright} 2015 IEEE.},
-author = {Oniga, Florin and Sarkozi, Ervin and Nedevschi, Sergiu},
-doi = {10.1109/ICCP.2015.7312630},
-file = {:home/nisaak/Downloads/07312630.pdf:pdf},
-isbn = {9781467382007},
-journal = {Proceedings - 2015 IEEE 11th International Conference on Intelligent Computer Communication and Processing, ICCP 2015},
-keywords = {driving assistance,obstacle detection,stereovision,u-disparity},
-mendeley-groups = {projects/proj-sp-isaak},
-pages = {203--207},
-publisher = {IEEE},
-title = {{Fast obstacle detection using U-disparity maps with stereo vision}},
-year = {2015}
+	abstract = {This paper introduces a computationally efficient, approach for obstacle detection in driving assistance applications, based on stereovision. The proposed approach involves three different steps aiming an increased quality of the results. The first step relies on the basics: obstacles correspond to peak regions in the u-disparity map. By applying the model of the stereo system, the peaks are detected with an adaptive threshold. The adaptive thresholding will calculate the accumulation of points required for an obstacle based on its distance (disparity) and will be related to the characteristics of the stereovision system. The second and third steps consist of refining the result of the previous, vertically respectively horizontally. This is necessary in order to fill out unmarked pixel regions which are classified as belonging to obstacles. The second step iterates vertically and propagates the obstacle label to neighbor pixels. The third step improves obstacle regions horizontally, with points that do not belong to the road. The solution is fast and reliable, on various scenarios, as every step is an improvement of the standard U-disparity approach for obstacle detection. {\textcopyright} 2015 IEEE.},
+	author = {Oniga, Florin and Sarkozi, Ervin and Nedevschi, Sergiu},
+	doi = {10.1109/ICCP.2015.7312630},
+	file = {:home/nisaak/Downloads/07312630.pdf:pdf},
+	isbn = {9781467382007},
+	journal = {Proceedings - 2015 IEEE 11th International Conference on Intelligent Computer Communication and Processing, ICCP 2015},
+	keywords = {driving assistance,obstacle detection,stereovision,u-disparity},
+	mendeley-groups = {projects/proj-sp-isaak},
+	pages = {203--207},
+	publisher = {IEEE},
+	title = {{Fast obstacle detection using U-disparity maps with stereo vision}},
+	year = {2015}
 }
 
 @INPROCEEDINGS{V-disparity_nonflat,
@@ -24,7 +24,8 @@ year = {2015}
 	keywords={automotive electronics;computer vision;object detection;real-time systems;stereo image processing;image representation;microcomputer applications;real-time obstacle detection;stereovision;nonflat road geometry;v-disparity representation;fast robust method;uphill gradients;downhill gradients;dynamic vehicle pitching;v-disparity image;semi-global matching;robust obstacle detection;partial occlusion;coherent structures;road edges;lane-markings;stereo image pair;object extraction;tyre-road contact points;Geometry;Robustness;Road vehicles;Image edge detection;Vehicle detection;Vehicle dynamics;Suspensions;Parameter estimation;Layout;Data mining},
 	doi={10.1109/IVS.2002.1188024},
 	ISSN={},
-	month={June},}
+	month={June},
+}
 
 @article{Hu2005,
 	abstract = {Reliable understanding of the 3D driving environment is vital for obstacle detection and adaptive cruise control (ACC) applications. Laser or millimeter wave radars have shown good performance in measuring relative speed and distance in a highway driving environment. However the accuracy of these systems decreases in an urban traffic environment as more confusion occurs due to factors such as parked vehicles, guardrails, poles and motorcycles. A stereovision based sensing system provides an effective supplement to radar-based road scene analysis with its much wider field of view and more accurate lateral information. This paper presents an efficient solution using a stereovision based road scene analysis algorithm, which employs the "U-V-disparity" concept. This concept is used to classify a 3D road scene into relative surface planes and characterize the features of road pavement surfaces, roadside structures and obstacles. Real-time implementation of the disparity map calculation and the "U-V-disparity" classification is also presented.},
@@ -41,6 +42,39 @@ year = {2015}
 	year = {2005}
 }
 
+@article{Kakegawa2018,
+	abstract = {In this paper, we propose a road surface segmenta-tion technique which is accurate and suitable for hardware implementation. The road surface is segmented by detecting the boundary between road and obstacle, based on the disparity histogram which we define as VLDH (Vertically Local Disparity Histogram). On each pixel of disparity image, VLDH is computed from the disparities of vertically local neighbourhood pixels. The major advantage is the feasibility of the pipeline processing on image processing hardware for stereo camera. The direct advantage on processing time is confirmed based on implementation into FPGA. Experimental result also shows that the accuracy of the proposed method is better than the conventional method.},
+	annote = {promising algorithm for computationally fast implementation. better disparity computation could be implemented to enhance performance. Code only in Matlab and C and not published.
+	
+	For more on U-V disparity I refer to:
+	U-V Disparity Analysis in Urban Environments},
+	author = {Kakegawa, Shinji and Matono, Haruki and Kido, Hideaki and Shima, Takeshi},
+	doi = {10.1007/s13177-017-0140-8},
+	file = {:home/nisaak/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Kakegawa et al. - 2018 - Road Surface Segmentation based on Vertically Local Disparity Histogram for Stereo Camera.pdf:pdf},
+	issn = {18688659},
+	journal = {International Journal of Intelligent Transportation Systems Research},
+	keywords = {Disparity histogram,FPGA,Road surface segmentation,Stereo camera,VLDH},
+	mendeley-groups = {projects/proj-sp-isaak},
+	number = {2},
+	pages = {90--97},
+	publisher = {International Journal of Intelligent Transportation Systems Research},
+	title = {{Road Surface Segmentation based on Vertically Local Disparity Histogram for Stereo Camera}},
+	volume = {16},
+	year = {2018}
+}
 
+@article{Iloie2014,
+	abstract = {High accuracy pedestrian detection plays an important role in all intelligent vehicles. This paper describes a system for detecting the obstacles in front of the vehicle and classifying them in pedestrians and non-pedestrians. It acquires the traffic scenes using a low-cost pair of gray intensities stereo cameras. A SORT-SGM stereo-reconstruction technique is used in order to obtain high density and accuracy in stereo-reconstructed points. First, the road plane is computed using the V disparity map and then the obstacles are determined by analyzing the U disparity map. Size related and histogram of oriented gradient based on gray levels features are used for describing each pedestrian hypothesis. A principle component analysis on the features is used for their selection and projection in a relevant space. Different SVM classifiers are trained considering the relevant features on large pedestrian and non-pedestrian image sets. A comparison between them is finally performed for selecting the one that achieves the best classification score.},
+	author = {Iloie, Alexandru and Giosan, Ion and Nedevschi, Sergiu},
+	doi = {10.1109/ICCP.2014.6936963},
+	file = {:home/nisaak/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Iloie, Giosan, Nedevschi - 2014 - UV disparity based obstacle detection and pedestrian classification in urban traffic scenarios.pdf:pdf},
+	isbn = {9781479965687},
+	journal = {Proceedings - 2014 IEEE 10th International Conference on Intelligent Computer Communication and Processing, ICCP 2014},
+	keywords = {UV-disparity,feature extraction,feature selection,obstacle detection,pedestrian classification,road plane detection},
+	mendeley-groups = {projects/proj-sp-isaak},
+	pages = {119--125},
+	title = {{UV disparity based obstacle detection and pedestrian classification in urban traffic scenarios}},
+	year = {2014}
+}
 
 
