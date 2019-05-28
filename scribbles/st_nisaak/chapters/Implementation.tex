@@ -9,8 +9,22 @@
 \section{V-Disparity Implementation}
 \label{vdisp_impl}
 
-This chapter explains the code implementation of the V-disparity method and elaborates on every part of the pipeline.
 
 \section{Hardware}
 
+The Gokart is fitted with a ZED Stereolabs camera, which was the basis for the V-Disparity method. The camera comes with a ZED SDK, which provides many functionalities, such as disparity map generation and point cloud computation.
+In addition, a Velodyne VLD-16 Lidar is mounted on top of the Gokart. It offers 16 scanning lines with high accuracy.
+More infos on the used hardware can be found on the manufacturer's website.
+
 \section{Code implementation}
+
+The method was implemented in the Python framework, while making use of the popular OpenCV library. OpenCV was used, mainly because of the existing methods already implemented, such as the probabilistic houghline transform, which was used for line-fitting. The OpenCV aims at real-time computer vision programming functions, which is a crucial property for autonomous vehicles.
+\newline
+
+Given the ZED Camera and the ZED SDK, data can be streamed from the Camera with few lines of code. Depending on the application, the resolution, framerate and other parameters can be adjusted accordingly. For disparity computation, range and quality can be modified, to fit the requirements.
+The disparity map is computed as float32. For visualisation purposes, a normalisation and conversion to uint8 type needs to be done. 
+For higher precision, the float32 disparity map can be used for further processing. 
+To ease up on computation, the uint8 disparity map was used for the V-Disparity method. The number of histogram bins for every row histogram is then set to 255, one for every disparity value present in the image. OpenCV's calcHist function was used.
+
+
+In order to avoid speckles and disjointed mask segments, all pixels are labeled according to their connectedness, using OpenCV's connectedComponents function. Only the largest connected region is kept, all other labels are discarded. 

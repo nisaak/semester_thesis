@@ -6,7 +6,8 @@
 \label{chp:Results}
 
 Results have been visually evaluated, as there is no ground truth available for this method. 
-The evaluation have shown, that for this project's implementation, the V-Disparity method does not provide the desired results. The generated mask lacks temporal coherency, and for mid-range distances (>4m), important features are not detected, such as various obstacles or road boundaries. 
+The evaluation have shown, that for this project's implementation, the V-Disparity method does not provide the desired results. The generated mask lacks temporal coherency, and for mid-range distances (>4m), important features are not detected, such as various obstacles or road boundaries.
 \newline
-The reason for this can be found in the generated disparity map. Without post processing, the backprojection of the road requires an accurate disparity map. However the quality of the disparity map diminishes for further distances, edges are not well preserved and artifacts in low-textured areas lead to inaccurate masks.
+The reason for this can be found in the generated disparity map. Without post processing, the backprojection of the road requires an accurate disparity map. However the quality of the disparity map diminishes for further distances, edges are not well preserved and artifacts in low-textured areas lead to inaccurate masks. As the disparity values for low-textured areas are hard to determine via block matching and the underlying disparity computation code is closed source, the exact reason for the error is hard to determine. 
 \newline
+Adjustments of the parameters can lead to better results. An extensive study on the quality and error of the ZED Camera was carried out by Ortiz et al. \cite{Ortiz2018}.
