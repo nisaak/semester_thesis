@@ -42,6 +42,52 @@ Oniga et al. \cite{Oniga2015} show a camera image, the corresponding dispartiy m
 
 \section{Lidar Camera Projection}
 
-To project lidar scanning points onto a camera image, the camera's intrinsic parameters should be known. Additionally, the projection matrix from lidar to camera should needs to be determined. It can be measured by hand and computed, or determined by externally calibrating the lidar and camera with an automated pipeline.
-\newline
-After driving a few laps on our indoor Gokart track, the lidar generates an occupancy grid. This occupancy grid is then projected onto the camera frame. By determining the relative pose and orientation of the camera with respect to the world frame, one can then project all points corresponding to the road onto the camera frame.
+%Write about how projection is done, how matrices are found and structure.
+The lidar scans its surrounding and generates a point cloud of the structures and objects around it. To begin with, a simple bidary classification was put in place. The classifier distinguishes obstacles and ground, via a simple height threshold. Therefore, all points above a certain height threshold are classified as obstacles. This is a rough approximation and by no means sufficient for higher level classification and detection task, but for a first implementation of the proposed method it adequate.
+If one only wants to project the points belonging to the ground onto the camera frame, the point cloud can be compressed to a 2D occupancy map, which will be used later. The full point cloud can be used as well, if needed. At first, the point cloud and occupancy map will be sparse, after a few laps however, it should be dense and contain all relevant points and it doesn't need to be updated anymore.
+After the point cloud/occupancy map acquisition, the points can be projected onto the camera frame.
+
+Before a point in camera coordinates can be projected onto the camera frame, the respective point in world coordinates needs to be converted to camera coordinates. \newline
+Let $X_{w}$  be a point in world coordinate frame. \newline
+Let $X_{c}$ be a a point in camera coordinate frame. \newline
+The two points relate to each other by a translation and rotation. To convert $X_{w}$ to $X_{c}$, a translation and rotation, in that order, need to be applied. 
+
+\begin{equation} \label{eq:1}
+X_{c} = R(X_{w} - C)
+\end{equation}
+
+
+Where all points are in non-homogeneous coordinates, R and C with respect to the world coordinate system.
+
+In homogenous coordinates, equation \ref{eq:1} can be written as follows.
+
+\begin{equation} \label{eq:2}
+	\widetilde{X}_{c} = \begin{bsmallmatrix} R & -RC \\ 0 & 1  \end{bsmallmatrix} \widetilde{X}_{w}
+\end{equation}
+
+To project lidar scanning points onto a camera image, the camera's intrinsic parameters should be known, namely the focal length $f_{x}$ and $f_{y}$ in x and y direction respectively and the camera's optical center $c_{x}$ and $c_{y}$. All can be summarised in, what is called, the intrinsic matrix K of the camera.
+
+\begin{equation} \label{mat:1}
+K = \begin{bsmallmatrix} f_{x} & 0 & c_{x} \\ 0 & f_{y} & c_{y} \\ 0 & 0 & 1  \end{bsmallmatrix}
+\end{equation}
+
+For most cameras, the distortion parameters need to be considered, to correct the pixel projection.
+OpenCV considers radial and tangential factors. More on that can be found on the OpenCV documentation site.
+
+The final projection of the point in camera coordinates onto the camera frame is done via simple matrix multiplication.
+
+\begin{equation} \label{eq:3}
+x = K [I | 0] \widetilde{X}_{c} = K R[I | -C] \widetilde{X}_{w}
+\end{equation}
+
+Where K denotes the intrinsic matrix from \ref{mat:1} and I the identity matrix.
+
+%write about projection matrix
+
+%Additionally, the projection matrix from lidar to camera needs to be determined. It can be measured by hand and computed, or determined by externally calibrating the lidar and camera with an automated pipeline.
+
+%While driving on our indoor Gokart track, the lidar generates an occupancy map. This occupancy map is then projected onto the camera frame. By determining the relative pose and orientation of the camera with respect to the world frame, one can then project all points corresponding to the road onto the camera frame.
+
+To determine the rotation and translation matrix, the kart's position and orientation with respect to the world coordinate frame needs to be known. Also, the relativ position and orientation of the camera to the kart's center needs to be measured or determined by a different method. Measuring can lead to large projection errors, as the method is inherently sensitive to even small errors. A different method to find the respective rotation and translation matrix is proposed by Dhall et al. \cite{DBLP:journals/corr/DhallCRK17}.
+
+All points which belong to the ground and are projected onto the camera image can be interpreted as a mask, covering all points in the camera image which belong to the ground. 

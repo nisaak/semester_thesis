@@ -23,12 +23,12 @@ def main():
     print("Running...")
     init = sl.InitParameters()
     init.camera_resolution = sl.RESOLUTION.RESOLUTION_VGA
-    init.camera_fps = 30
-    init.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_MEDIUM  # Use PERFORMANCE depth mode
+    init.camera_fps = 60
+    init.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_PERFORMANCE  # Use PERFORMANCE depth mode
     init.coordinate_units = sl.UNIT.UNIT_METER  # Use milliliter units (for depth measurements)
     init.depth_minimum_distance = 0.3
     cam = sl.Camera()
-    cam.set_depth_max_range_value(40)
+    cam.set_depth_max_range_value(20)
     if not cam.is_opened():
         print("Opening ZED Camera...")
     status = cam.open(init)
@@ -42,6 +42,9 @@ def main():
     mat = sl.Mat()
     disparity = sl.Mat()
     depth = sl.Mat()
+    confidence_map = sl.Mat()
+    
+    
     fourcc = cv2.VideoWriter_fourcc('F','M','P','4')
     #specify all video to be written
     mask_video=cv2.VideoWriter('./videos/mask_'+ timestr +'.avi',fourcc, 10,(672, 376),0)
@@ -61,19 +64,15 @@ def main():
             cam.retrieve_image(mat, sl.VIEW.VIEW_LEFT)
             cam.retrieve_measure(disparity, sl.MEASURE.MEASURE_DISPARITY) #retrieve disparity map
             cam.retrieve_image(depth, sl.VIEW.VIEW_DEPTH)
+            cam.retrieve_measure(confidence_map, sl.MEASURE.MEASURE_CONFIDENCE)
             cv2.imshow('depth',depth.get_data())
-            
             
             
             ###MASK CALCULATIONS
 
-            u = uv_disp.UV_disp()
+            u = uv_disp.UV_disp() #initialize class
            
             disp_np = np.copy(disparity.get_data()) #copy and convert to numpy array..! there are issues because normalization with nan and inf
-#            disp_np = np.copy(depth.get_data())
-#            disp_np = cv2.cvtColor(disp_np, cv2.COLOR_BGRA2GRAY)
-#            info = np.finfo(disp_np.dtype)
-#            disp_np[np.isnan(disp_np)] = 0 #this is need because else the images becomes black after normalization
             disp_np[np.isinf(disp_np)] = 0
             cv2.normalize(disp_np, disp_np, 0, 255, cv2.NORM_MINMAX, cv2.CV_32F) #normalizing makes flickering artifacts, change norm type
             disp_np = disp_np.astype(np.uint8)
@@ -86,22 +85,23 @@ def main():
             """
             V_disp = u.v_disp(disp_np) #compute v-disp histogram
 #            U_disp = u.u_disp(disp_np)
-            
-            
             #maybe remove noise in disparity map
             
             v_houghlines = u.v_hough(V_disp)
 #            u.backprop(V_disp, disp_np, v_houghlines)
-
 #            u_houghlines = u.u_hough(U_disp)
             disp_np = cv2.resize(disp_np, dsize =(0,0),fx = 0.5, fy= 0.5, interpolation = cv2.INTER_AREA)
-            
+
 #            obst_mask = u.mask_obstacles(disp_np, u_houghlines)
             
             floor_mask = u.mask(disp_np, v_houghlines)
             floor_mask = cv2.resize(floor_mask, dsize =(0,0),fx = 2, fy= 2,interpolation = cv2.INTER_CUBIC)
             
+#            conf_map = (np.copy(confidence_map.get_data())/100) #normalize to 0-1
+#            cv2.imshow('conf_map', conf_map)
             refined_mask = u.refine_mask(floor_mask) #astype uint8
+#            refined_mask = np.multiply(refined_mask, conf_map)
+#            refined_mask = refined_mask.astype(np.uint8)
 #            refined_mask = cv2.cvtColor(refined_mask, cv2.COLOR_GRAY2BGR)
 
             cam_img = mat.get_data() #astype uint8 4 channels RGBA
@@ -135,9 +135,9 @@ def main():
     
     
     #release all videos
-    mask_video.release()
-    disparity_video.release()
-    v_disparity_video.release()
+#    mask_video.release()
+#    disparity_video.release()
+#    v_disparity_video.release()
     
     
     cv2.destroyAllWindows()

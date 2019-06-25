@@ -9,17 +9,12 @@ import math
 #height, width  = (360, 640) 
 #height, width  = (768, 1024)
 MAX_DISPARITY = 255
-
-
-#def dir_filter():
     
 class UV_disp:
 
     def load_and_resize(self,disp_map, source_image):
         
-        width, height = disp_map.shape
-    
-    
+        width, height = disp_map.shape  
         src_img = np.copy(source_image)
         disp = np.copy(disp_map)
         
@@ -31,13 +26,7 @@ class UV_disp:
     def u_disp(self,disparity):
         
         height, width = disparity.shape
-        
-        #specify image shape for later use
-        
         disp_map = np.copy(disparity).astype(np.uint8)
-        
-        
-        
         #create U disparity histogram
         
         U_disp = np.zeros((MAX_DISPARITY, width),np.float)
@@ -48,26 +37,13 @@ class UV_disp:
         uhist_vis = np.array(U_disp*255, np.uint8) #scale
         ublack_mask = uhist_vis < 5    #define threshold for black mask
         uhist_vis[ublack_mask] = 0  #set black mask to zero
-    
         U_disp = uhist_vis
-        
-    #    U_disp = cv2.normalize(U_disp, U_disp, 0, 255, cv2.NORM_MINMAX, cv2.CV_8U)
-        
         return U_disp
                 
     def v_disp(self,disparity):
         
         height, width = disparity.shape
-        
-        
-    
-    
         disp_map = np.copy(disparity).astype(np.uint8)
-    
-        
-    
-        
-        #    def v_disparity(self, image):
         V_disp = np.zeros((height, MAX_DISPARITY),np.float)
         for v in range(height):
             V_disp[v, ...] = cv2.calcHist(images = [disp_map[v, ...]],channels = [0],mask = None, histSize = [MAX_DISPARITY], 
@@ -76,12 +52,9 @@ class UV_disp:
         cv2.normalize(V_disp, V_disp, 0 ,255, cv2.NORM_MINMAX, cv2.CV_32F)
 #        V_disp = V_disp.astype(np.uint8)
         vhist_vis  = np.array(V_disp*255, np.uint8)
-#        vblack_mask = vhist_vis < 5
-#        vhist_vis[vblack_mask] = 0
-        V_disp = vhist_vis
-        
-    #    V_disp = cv2.normalize(V_disp, V_disp, 0, 255, cv2.NORM_MINMAX, cv2.CV_8U)
-        
+        vblack_mask = vhist_vis < 5
+        vhist_vis[vblack_mask] = 0
+        V_disp = vhist_vis       
         return V_disp
     
     def u_hough(self, U_disparity):
@@ -150,7 +123,7 @@ class UV_disp:
     def v_hough_peaks(self, V_disparity):
         V_disp = np.copy(V_disparity)
         
-#        V_disp[0:int(V_disp.shape[0]/3),:] = 0 #make upper third black for more relevant line detection
+        V_disp[0:int(V_disp.shape[0]/3),:] = 0 #make upper third black for more relevant line detection
         #convert V_disp to right format
         cdst_vert = np.zeros_like(V_disp)
         max_linelen = 100
@@ -197,14 +170,11 @@ class UV_disp:
             for n in range(width):   
                 if v_line[m] == 0:
                     mask_v_disp[m,n] = 0
-    
                 elif (disp_map[m,n]  >= (v_line[m]-threshold) and disp_map[m,n] <= (v_line[m]+threshold)):
                     mask_v_disp[m,n] = 255
                 else:
                     mask_v_disp[m,n] = 0
-    
-       
-            
+     
         return mask_v_disp
       
     def mask_obstacles(self,disparity, cdst):
@@ -212,13 +182,8 @@ class UV_disp:
         
         height, width = disparity.shape
             
-        cdst = cv2.resize(cdst, dsize = (width, 255))
-
-
-         
-        threshold = 5 #adjust threshold according to line gradient
-        
-        
+        cdst = cv2.resize(cdst, dsize = (width, 255))        
+        threshold = 5 #adjust threshold according to line gradient       
         disp_map = np.copy(disparity)
         
         #create mask for image
@@ -285,5 +250,10 @@ class UV_disp:
 #        for v in range(height):
         backprop = cv2.calcBackProject(images = [disparity], channels = [0], hist = hist_to_backproject, ranges = [0, MAX_DISPARITY],scale =1)
         cv2.imshow('backprop',backprop*255)
-        print(backprop.max())
+        
+    def region_cut(self, mask, img):
+        hist = cv2.calcHist([img],[0], mask,[256], [0,256])
+        
+        
+        
     ###IGNORE FOR NOW####

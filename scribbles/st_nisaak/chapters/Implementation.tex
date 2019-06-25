@@ -5,12 +5,16 @@
 \chapter{Implementation}
 \label{chp:Implementation}
 
+%write about implementation of ROS
+
 
 \section{V-Disparity Implementation}
 \label{vdisp_impl}
 
 
 \section{Hardware}
+
+%write more about settings and performance of zed camera, and lidar
 
 The Gokart is fitted with a ZED Stereolabs camera, see Figure \ref{fig:zedproductmain}, which was the basis for the V-Disparity method. The camera comes with a ZED SDK, which provides many functionalities, such as disparity map generation and point cloud computation. The Python API enables quick and intuitive access to these functionalities.
 In addition, a Velodyne VLD-16 Lidar is mounted on top of the Gokart, which can be seen in Figure \ref{fig:lidar}. It offers 16 scanning lines with high accuracy.
@@ -33,6 +37,7 @@ More infos on the used hardware can be found on the manufacturer's website.
 
 
 \section{Code implementation}
+\subsection{V-Disparity}
 
 The method was implemented in the Python framework, while making use of the popular OpenCV library. OpenCV was used, mainly because of the existing methods already implemented, such as the probabilistic houghline transform, which was used for line-fitting. The OpenCV aims at real-time computer vision programming functions, which is a crucial property for autonomous vehicles.
 \newline
@@ -49,3 +54,8 @@ For the current implementation, the disparity map and camera images are streamed
 
 
 In order to avoid speckles and disjointed mask segments, all mask pixels are labeled according to their connectedness, using OpenCV's connectedComponents function. Only the largest connected region is kept, all other labels are discarded. 
+
+\subsection{Lidar to camera projection}
+%write about how to construct rotation matrix
+
+Euler angles where used to determine the rotation matrices. After constructing the rotation vector and determining the relative angles, the vector was transformed to a 3x3 rotation matrix. Because OpenCV only uses Rodrigues Vector notation for rotation, the rotation matrix had to be converted to Rodrigues as well. This was easily done with an already implemented OpenCV function.

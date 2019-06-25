@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.5.6)  31 MAY 2019 16:38
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.5.6)  25 JUN 2019 17:12
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -2385,12 +2385,12 @@ Package hyperref Info: Option `pageanchor' set `false' on input line 27.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-<docstyle/logos/eth.pdf, id=83, 854.19125pt x 229.85875pt>
+<docstyle/logos/eth.pdf, id=91, 854.19125pt x 229.85875pt>
 File: docstyle/logos/eth.pdf Graphic file (type pdf)
 <use docstyle/logos/eth.pdf>
 Package pdftex.def Info: docstyle/logos/eth.pdf  used on input line 27.
 (pdftex.def)             Requested size: 169.16689pt x 45.52458pt.
-<docstyle/logos/idsc.pdf, id=84, 745.78625pt x 171.64125pt>
+<docstyle/logos/idsc.pdf, id=92, 745.78625pt x 171.64125pt>
 File: docstyle/logos/idsc.pdf Graphic file (type pdf)
 <use docstyle/logos/idsc.pdf>
 Package pdftex.def Info: docstyle/logos/idsc.pdf  used on input line 27.
@@ -2520,33 +2520,34 @@ or  <return>  to continue without it.
 
 
 ]
-<Figures/vdisp.png, id=187, 930.47626pt x 519.9425pt>
+<Figures/vdisp.png, id=197, 930.47626pt x 519.9425pt>
 File: Figures/vdisp.png Graphic file (type png)
 <use Figures/vdisp.png>
 Package pdftex.def Info: Figures/vdisp.png  used on input line 34.
 (pdftex.def)             Requested size: 298.75262pt x 166.94035pt.
-) (./chapters/Implementation.tex [4 <./Figures/vdisp.png>]
+[4 <./Figures/vdisp.png>]) (./chapters/Implementation.tex [5] [6
+
+]
 Chapter 3.
-<Figures/lidar.jpeg, id=199, 225.84375pt x 225.84375pt>
+<Figures/lidar.jpeg, id=229, 225.84375pt x 225.84375pt>
 File: Figures/lidar.jpeg Graphic file (type jpg)
 <use Figures/lidar.jpeg>
-Package pdftex.def Info: Figures/lidar.jpeg  used on input line 21.
+Package pdftex.def Info: Figures/lidar.jpeg  used on input line 25.
 (pdftex.def)             Requested size: 213.39566pt x 213.40967pt.
-<Figures/ZED_product_main.jpg, id=200, 1170.3725pt x 401.5pt>
+<Figures/ZED_product_main.jpg, id=230, 1170.3725pt x 401.5pt>
 File: Figures/ZED_product_main.jpg Graphic file (type jpg)
 <use Figures/ZED_product_main.jpg>
-Package pdftex.def Info: Figures/ZED_product_main.jpg  used on input line 28.
+Package pdftex.def Info: Figures/ZED_product_main.jpg  used on input line 32.
 (pdftex.def)             Requested size: 298.75262pt x 102.48834pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 37--39
+Underfull \hbox (badness 10000) in paragraph at lines 42--44
 
  []
 
-[5
+[7
 
-
-] [6 <./Figures/lidar.jpeg> <./Figures/ZED_product_main.jpg>]) (./chapters/Resu
-lts.tex [7] [8
+] [8 <./Figures/lidar.jpeg> <./Figures/ZED_product_main.jpg>]) (./chapters/Resu
+lts.tex [9] [10
 
 ]
 Chapter 4.
@@ -2563,9 +2564,9 @@ Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
 or  <return>  to continue without it.
 
-) (./chapters/Conclusion.tex [9
+) (./chapters/Conclusion.tex [11
 
-] [10
+] [12
 
 ]
 Chapter 5.
@@ -2573,19 +2574,19 @@ Chapter 5.
 Package hyperref Warning: Difference (2) between bookmark levels is greater 
 (hyperref)                than one, level fixed on input line 10.
 
-) (./chapters/exampleAppendixChapter.tex [11
-
-] [12
-
-]
-Appendix A.
-) (build/report.bbl [13
+) (./chapters/exampleAppendixChapter.tex [13
 
 ] [14
 
-]) [15
+]
+Appendix A.
+) (build/report.bbl [15
 
 ] [16
+
+]) [17
+
+] [18
 
 ]
 *geometry* verbose mode - [ newgeometry ] result:
@@ -2628,7 +2629,7 @@ Package pdftex.def Info: docstyle/logos/eth.pdf  used on input line 35.
 LaTeX Font Info:    Try loading font information for T1+lmss on input line 35.
 (/usr/share/texmf/tex/latex/lm/t1lmss.fd
 File: t1lmss.fd 2009/10/30 v1.6 Font defs for Latin Modern
-) [17
+) [19
 
 ]
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 35.
@@ -2637,29 +2638,33 @@ Package atveryend Info: Empty hook `AfterLastShipout' on input line 35.
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 35.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 35.
 Package rerunfilecheck Info: File `report.out' has not changed.
-(rerunfilecheck)             Checksum: 0F247B2CE7F1D7B500C525F11978C426;1277.
+(rerunfilecheck)             Checksum: 1074C1DC41CAA0C0AFB778297582701B;1449.
  ) 
 Here is how much of TeX's memory you used:
- 51474 strings out of 492982
- 1109668 string characters out of 6134897
- 1270543 words of memory out of 5000000
- 54200 multiletter control sequences out of 15000+600000
+ 51493 strings out of 492982
+ 1109892 string characters out of 6134897
+ 1271543 words of memory out of 5000000
+ 54211 multiletter control sequences out of 15000+600000
  601893 words of font info for 70 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  69i,12n,98p,10358b,2575s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}{/usr/share/texmf/fonts/enc/dv
-ips/lm/lm-rm.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathit.enc}</usr/share
+ips/lm/lm-mathit.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}</usr/share
 /texmf/fonts/type1/public/lm/lmbx10.pfb></usr/share/texmf/fonts/type1/public/lm
 /lmbx12.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi10.pfb></usr/share/texm
-f/fonts/type1/public/lm/lmmi7.pfb></usr/share/texmf/fonts/type1/public/lm/lmr10
-.pfb></usr/share/texmf/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/
-type1/public/lm/lmr17.pfb></usr/share/texmf/fonts/type1/public/lm/lmri10.pfb></
-usr/share/texmf/fonts/type1/public/lm/lmss10.pfb></usr/share/texmf/fonts/type1/
-public/lm/lmtt10.pfb>
-Output written on build/report.pdf (23 pages, 605076 bytes).
+f/fonts/type1/public/lm/lmmi5.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi7
+.pfb></usr/share/texmf/fonts/type1/public/lm/lmr10.pfb></usr/share/texmf/fonts/
+type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/public/lm/lmr17.pfb></u
+sr/share/texmf/fonts/type1/public/lm/lmr7.pfb></usr/share/texmf/fonts/type1/pub
+lic/lm/lmri10.pfb></usr/share/texmf/fonts/type1/public/lm/lmss10.pfb></usr/shar
+e/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texlive/texmf-dist/fonts/t
+ype1/public/mathabx-type1/matha10.pfb></usr/share/texlive/texmf-dist/fonts/type
+1/public/mathabx-type1/matha7.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
+blic/mathabx-type1/mathx10.pfb>
+Output written on build/report.pdf (25 pages, 642062 bytes).
 PDF statistics:
- 321 PDF objects out of 1000 (max. 8388607)
- 274 compressed objects within 3 object streams
- 55 named destinations out of 1000 (max. 500000)
- 190 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 369 PDF objects out of 1000 (max. 8388607)
+ 314 compressed objects within 4 object streams
+ 63 named destinations out of 1000 (max. 500000)
+ 206 words of extra memory for PDF output out of 10000 (max. 10000000)
 
