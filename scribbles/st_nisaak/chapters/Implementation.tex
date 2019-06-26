@@ -59,3 +59,4 @@ In order to avoid speckles and disjointed mask segments, all mask pixels are lab
 %write about how to construct rotation matrix
 
 Euler angles where used to determine the rotation matrices. After constructing the rotation vector and determining the relative angles, the vector was transformed to a 3x3 rotation matrix. Because OpenCV only uses Rodrigues Vector notation for rotation, the rotation matrix had to be converted to Rodrigues as well. This was easily done with an already implemented OpenCV function.
+There are two rotation and translation matrices which are used. The translation and rotation from the kart's center point to the camera is fixed and needs to be measured. The translation and rotation from the world coordinate origin to the kart's center points can be extracted from the generated odometry parameters.
